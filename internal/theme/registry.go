@@ -1,5 +1,9 @@
 package theme
 
+import "errors"
+
+var ErrUnknownTheme = errors.New("theme: not registered")
+
 type Registry struct {
 	order  []string
 	byName map[string]Theme

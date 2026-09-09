@@ -43,6 +43,7 @@ internal/app/shell_test.go
 internal/app/testdata/TestGoldenExampleScreen/high-contrast.golden
 internal/app/testdata/TestGoldenExampleScreen/monochrome.golden
 internal/app/testdata/TestGoldenExampleScreen/violet-dark.golden
+internal/app/theme_test.go
 internal/app/update.go
 internal/app/view.go
 internal/config/config.go
@@ -61,10 +62,13 @@ internal/store/errors.go
 internal/store/migrate.go
 internal/store/migrations/00001_example_items.sql
 internal/store/store.go
+internal/theme/file.go
 internal/theme/high_contrast.go
 internal/theme/monochrome.go
 internal/theme/registry.go
 internal/theme/theme.go
+internal/theme/token.go
+internal/theme/token_test.go
 internal/theme/violet.go
 internal/ui/command.go
 internal/ui/hatch.go
@@ -202,19 +206,93 @@ The status bar and the help screen are both generated from that registry, so
 neither needs editing. Match it in an update function with
 `key.Matches(msg, m.keys.Reports.Archive)`.
 
-## Adding a theme
+## Theming
+
+Colors are fully customizable at runtime. There are three routes, in
+increasing order of effort.
+
+### 1. Override tokens in the config file
+
+`~/.config/reusable-tui/config.json` can recolor any registered theme without
+replacing it. Overrides are keyed by theme name and survive theme switching.
+
+```json
+{
+  "theme": "violet-dark",
+  "overrides": {
+    "violet-dark": {
+      "accent.active": "#22D3EE",
+      "border.focused": "#22D3EE"
+    }
+  }
+}
+```
+
+### 2. Drop a theme file in the themes directory
+
+Any `*.json` file in `~/.config/reusable-tui/themes/` becomes a registered
+theme, listed in the palette like a builtin. `extends` inherits every token
+from an existing theme so you only state what differs.
+
+```json
+{
+  "name": "cyan",
+  "extends": "violet-dark",
+  "tokens": {
+    "accent.active": "#22D3EE",
+    "accent.mid": "#1A9EB4",
+    "accent.dim": "#123F49",
+    "border.focused": "#22D3EE"
+  }
+}
+```
+
+Omit `extends` to inherit from the default theme. Run **Export active theme to
+a file** from the palette to write the current theme out in full as a starting
+point, and **Reload themes from disk** to pick up edits without restarting.
+
+A file that fails to parse or names an unknown token never blocks startup: the
+theme is skipped and the problem is reported as a warning toast.
+
+### 3. Add a theme in Go
 
 1. Create `internal/theme/<name>.go` returning a `Theme` from a named function.
    Fill every token; reuse `defaultSpace()` and `defaultMarkers()` unless the
    theme genuinely changes spacing or glyphs.
 2. Register it in `Builtin()` in `internal/theme/registry.go`.
 
-It immediately appears in the palette as `Theme: <name>`, is persisted to config
-when selected, and is picked up by the golden test, which renders the example
-screen once per registered theme.
+It immediately appears in the palette, is persisted to config when selected,
+and is picked up by the golden test, which renders the example screen once per
+registered theme.
+
+### Token reference
+
+`theme.Tokens()` returns the authoritative list. Every one of them is settable
+from a config override or a theme file.
+
+| Group | Tokens |
+| --- | --- |
+| `base` | `background`, `surface`, `overlay` |
+| `text` | `primary`, `secondary`, `muted`, `disabled`, `inverted` |
+| `accent` | `active`, `mid`, `dim` |
+| `border` | `focused`, `unfocused`, `subtle`, `focused.set`, `unfocused.set` |
+| `status.<state>` | `fg`, `label`, `glyph` for `success`, `warning`, `danger`, `info` |
+
+Color values are `#RGB`, `#RRGGBB`, or an ANSI index `0`-`255`. Border set
+values are `rounded`, `normal`, `thick`, `double`, `block` or `hidden`.
 
 Every semantic state carries a color, a text label and an ASCII glyph, so no
-state is signalled by color alone.
+state is signalled by color alone; recoloring a status token never makes it
+unreadable. Spacing and marker glyphs stay in Go, in `theme.SpaceTokens` and
+`theme.MarkerTokens`.
+
+### Adding a token
+
+Adding a token to the customizable set touches one file,
+`internal/theme/token.go`: add the constant, list it in `tokenOrder`, and add
+its case to `ReadToken` and to the matching writer. `TestEveryTokenRoundTrips`
+fails if a listed token is not readable and writable, so the list cannot drift
+from the switches.
 
 ## Adding a command to the palette
 
@@ -237,7 +315,8 @@ is the only path a command needs.
 ## Tests
 
 `go test ./...` covers, through `teatest`, tab cycling, focus cycling, jump mode,
-palette search, theme switching, window resize and the minimum-size guard. A
+palette search, theme switching, window resize and the minimum-size guard, plus
+token round-tripping, user theme files, config overrides, export and reload. A
 golden-file test renders the example screen once per builtin theme, so an
 unintended aesthetic change fails CI. Regenerate the goldens with `make golden`
 only when the change is intentional.

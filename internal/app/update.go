@@ -24,6 +24,12 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.showToast(typed.Text, ui.ToastInfo)
 	case ui.SuccessMsg:
 		return m, m.showToast(typed.Text, ui.ToastSuccess)
+	case ui.WarnMsg:
+		return m, m.showToast(typed.Text, ui.ToastWarning)
+	case themesReloadedMsg:
+		return m, m.adoptThemes(typed)
+	case exportThemeMsg:
+		return m, exportTheme(m.opts.ThemeDir, m.theme)
 	case ui.NotifyMsg:
 		return m, notifyCmd(m.opts.Notifier, typed.Title, typed.Body)
 	case ui.ThemeMsg:
@@ -124,4 +130,16 @@ func (m *Model) switchTheme(name string) tea.Cmd {
 	m.theme = m.opts.Themes.Resolve(name, m.opts.Fidelity)
 	m.opts.Config.Theme = name
 	return persistConfig(m.opts.ConfigPath, m.opts.Config)
+}
+
+func (m *Model) adoptThemes(msg themesReloadedMsg) tea.Cmd {
+	m.opts.Themes = msg.registry
+	m.theme = msg.registry.Resolve(m.opts.Config.Theme, m.opts.Fidelity)
+	m.commands = ui.NewCommandRegistry()
+	m.registerCommands()
+	m.palette = ui.NewPalette(m.commands)
+	if warning := joinWarnings(msg.warnings); warning != "" {
+		return ui.Warn(warning)
+	}
+	return ui.Success("themes reloaded")
 }

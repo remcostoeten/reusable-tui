@@ -21,7 +21,9 @@ type Options struct {
 	ConfigPath string
 	Notifier   notify.Notifier
 	Themes     *theme.Registry
+	ThemeDir   string
 	Fidelity   theme.Fidelity
+	Warnings   []error
 }
 
 type Model struct {
@@ -71,6 +73,9 @@ func (m *Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{ui.Tick()}
 	for _, screen := range m.screens {
 		cmds = append(cmds, screen.Init())
+	}
+	if warning := joinWarnings(m.opts.Warnings); warning != "" {
+		cmds = append(cmds, ui.Warn(warning))
 	}
 	return tea.Batch(cmds...)
 }

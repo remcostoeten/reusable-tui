@@ -39,13 +39,18 @@ func run() error {
 	}
 	defer func() { _ = db.Close() }()
 
+	themeDir := theme.UserDir(app.Name)
+	themes, warnings := theme.Compose(themeDir, cfg.Overrides)
+
 	model := app.New(app.Options{
 		Store:      db,
 		Config:     cfg,
 		ConfigPath: configPath,
 		Notifier:   notify.NewDesktop(app.Name),
-		Themes:     theme.Builtin(),
+		Themes:     themes,
+		ThemeDir:   themeDir,
 		Fidelity:   theme.FidelityFor(lipgloss.ColorProfile()),
+		Warnings:   warnings,
 	})
 
 	program := tea.NewProgram(model, tea.WithAltScreen())

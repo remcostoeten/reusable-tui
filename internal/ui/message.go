@@ -14,6 +14,10 @@ type SuccessMsg struct {
 	Text string
 }
 
+type WarnMsg struct {
+	Text string
+}
+
 type ThemeMsg struct {
 	Name string
 }
@@ -37,6 +41,10 @@ func Info(text string) tea.Cmd {
 
 func Success(text string) tea.Cmd {
 	return func() tea.Msg { return SuccessMsg{Text: text} }
+}
+
+func Warn(text string) tea.Cmd {
+	return func() tea.Msg { return WarnMsg{Text: text} }
 }
 
 func SetTheme(name string) tea.Cmd {

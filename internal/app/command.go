@@ -1,9 +1,12 @@
 package app
 
 import (
+	"path/filepath"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/remcostoeten/reusable-tui/internal/config"
 	"github.com/remcostoeten/reusable-tui/internal/notify"
+	"github.com/remcostoeten/reusable-tui/internal/theme"
 	"github.com/remcostoeten/reusable-tui/internal/ui"
 )
 
@@ -24,6 +27,18 @@ func (m *Model) registerCommands() {
 			Run:   goToScreen(screen.ID()),
 		})
 	}
+	m.commands.Add(ui.Command{
+		ID:    "theme.reload",
+		Label: "Reload themes from disk",
+		Group: "theme",
+		Run:   reloadThemes(m.opts.ThemeDir, m.opts.Config.Overrides),
+	})
+	m.commands.Add(ui.Command{
+		ID:    "theme.export",
+		Label: "Export active theme to a file",
+		Group: "theme",
+		Run:   exportActive(),
+	})
 	m.commands.Add(ui.Command{
 		ID:    "app.quit",
 		Label: "Quit",
@@ -63,4 +78,36 @@ func persistResult(path string, cfg config.Config) tea.Msg {
 		return ui.ErrorMsg{Err: err}
 	}
 	return nil
+}
+
+type themesReloadedMsg struct {
+	registry *theme.Registry
+	warnings []error
+}
+
+func reloadThemes(dir string, overrides map[string]map[string]string) tea.Cmd {
+	return func() tea.Msg { return reloadResult(dir, overrides) }
+}
+
+func reloadResult(dir string, overrides map[string]map[string]string) tea.Msg {
+	registry, warnings := theme.Compose(dir, overrides)
+	return themesReloadedMsg{registry: registry, warnings: warnings}
+}
+
+type exportThemeMsg struct{}
+
+func exportActive() tea.Cmd {
+	return func() tea.Msg { return exportThemeMsg{} }
+}
+
+func exportTheme(dir string, active theme.Theme) tea.Cmd {
+	return func() tea.Msg { return exportResult(dir, active) }
+}
+
+func exportResult(dir string, active theme.Theme) tea.Msg {
+	path := filepath.Join(dir, active.Name+".json")
+	if err := theme.WriteFile(path, theme.Export(active)); err != nil {
+		return ui.ErrorMsg{Err: err}
+	}
+	return ui.SuccessMsg{Text: "wrote " + path}
 }

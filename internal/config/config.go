@@ -13,11 +13,12 @@ import (
 const fileName = "config.json"
 
 type Config struct {
-	Theme string `json:"theme"`
+	Theme     string                       `json:"theme"`
+	Overrides map[string]map[string]string `json:"overrides,omitempty"`
 }
 
 func Defaults() Config {
-	return Config{Theme: "violet-dark"}
+	return Config{Theme: "violet-dark", Overrides: map[string]map[string]string{}}
 }
 
 func Path(appName string) (string, error) {
