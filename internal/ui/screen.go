@@ -14,6 +14,7 @@ type RenderContext struct {
 	Tick    int
 	Focused string
 	Jump    Jump
+	Hits    *HitMap
 }
 
 type Screen interface {

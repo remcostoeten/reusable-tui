@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"os"
 
@@ -14,14 +16,24 @@ import (
 )
 
 func main() {
-	if err := run(); err != nil {
+	f, err := parseFlags(os.Args[1:], os.Stderr)
+	switch {
+	case errors.Is(err, flag.ErrHelp):
+		return
+	case errors.Is(err, errShowVersion):
+		fmt.Println(app.Name, app.Version)
+		return
+	case err != nil:
+		os.Exit(2)
+	}
+	if err := run(f); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		os.Exit(1)
 	}
 }
 
-func run() error {
-	configPath, err := config.Path(app.Name)
+func run(f flags) error {
+	configPath, err := resolveConfigPath(f)
 	if err != nil {
 		return err
 	}
@@ -29,7 +41,10 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	dbPath, err := store.DefaultPath(app.Name)
+	if f.themeName != "" {
+		cfg.Theme = f.themeName
+	}
+	dbPath, err := resolveDBPath(f)
 	if err != nil {
 		return err
 	}
@@ -53,7 +68,29 @@ func run() error {
 		Warnings:   warnings,
 	})
 
-	program := tea.NewProgram(model, tea.WithAltScreen())
+	program := tea.NewProgram(model, programOptions(f)...)
 	_, err = program.Run()
 	return err
+}
+
+func programOptions(f flags) []tea.ProgramOption {
+	opts := []tea.ProgramOption{tea.WithAltScreen()}
+	if !f.noMouse {
+		opts = append(opts, tea.WithMouseCellMotion())
+	}
+	return opts
+}
+
+func resolveConfigPath(f flags) (string, error) {
+	if f.configPath != "" {
+		return f.configPath, nil
+	}
+	return config.Path(app.Name)
+}
+
+func resolveDBPath(f flags) (string, error) {
+	if f.dbPath != "" {
+		return f.dbPath, nil
+	}
+	return store.DefaultPath(app.Name)
 }

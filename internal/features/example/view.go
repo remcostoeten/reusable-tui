@@ -12,7 +12,10 @@ import (
 func (m *Model) View(ctx ui.RenderContext) string {
 	t := ctx.Theme
 	widths := ui.SplitWidths(ctx.Width, t.Space.Gutter, 3, 2)
+	ctx.Hits.Add(keymap.PanelExampleList, ui.Rect{X: 0, Y: 0, Width: widths[0], Height: ctx.Height})
+	ctx.Hits.Add(keymap.PanelExampleDetail, ui.Rect{X: widths[0] + t.Space.Gutter, Y: 0, Width: widths[1], Height: ctx.Height})
 	list := ui.Panel{
+		ID:      keymap.PanelExampleList,
 		Title:   "Items",
 		Badge:   strconv.Itoa(len(m.items)),
 		Hint:    ctx.Jump.Hint(keymap.PanelExampleList),
@@ -23,6 +26,7 @@ func (m *Model) View(ctx ui.RenderContext) string {
 	list.Body = m.listBody(t, list.ContentWidth(t), list.ContentHeight(t), ctx.Tick)
 
 	detail := ui.Panel{
+		ID:      keymap.PanelExampleDetail,
 		Title:   "Detail",
 		Hint:    ctx.Jump.Hint(keymap.PanelExampleDetail),
 		Width:   widths[1],

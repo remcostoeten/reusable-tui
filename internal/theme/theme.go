@@ -93,6 +93,7 @@ type MarkerTokens struct {
 	Bullet        string
 	SelectedLeft  string
 	UnselectedPad string
+	Spinner       string
 }
 
 type Theme struct {
@@ -162,6 +163,7 @@ func defaultMarkers() MarkerTokens {
 		Bullet:        "·",
 		SelectedLeft:  ">",
 		UnselectedPad: " ",
+		Spinner:       "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏",
 	}
 }
 
@@ -183,6 +185,7 @@ func Adapt(t Theme, f Fidelity) Theme {
 		t.Border.UnfocusedSet = lipgloss.RoundedBorder()
 		t.Marker.FocusOpen = "["
 		t.Marker.FocusClose = "]"
+		t.Marker.Spinner = "|/-\\"
 	}
 	return t
 }

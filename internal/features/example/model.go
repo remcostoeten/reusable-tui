@@ -12,6 +12,7 @@ import (
 const (
 	ScreenID    = "example"
 	ScreenTitle = "Example"
+	busyLoad    = "example.load"
 )
 
 type Model struct {
@@ -52,7 +53,22 @@ func (m *Model) Panels() []string {
 }
 
 func (m *Model) Init() tea.Cmd {
-	return loadItems(m.db)
+	return m.reload()
+}
+
+func (m *Model) reload() tea.Cmd {
+	m.loading = true
+	return tea.Batch(ui.Busy(busyLoad, "loading items"), loadItems(m.db))
+}
+
+func (m *Model) selectRow(row int) {
+	if m.adding {
+		row--
+	}
+	if row < 0 || row >= len(m.items) {
+		return
+	}
+	m.cursor = row
 }
 
 func (m *Model) Focus(panelID string) {

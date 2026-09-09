@@ -19,6 +19,7 @@ type Dashboard struct {
 	Width  int
 	Height int
 	Stacks []Stack
+	Hits   *HitMap
 }
 
 func RenderDashboard(t theme.Theme, d Dashboard) string {
@@ -27,20 +28,25 @@ func RenderDashboard(t theme.Theme, d Dashboard) string {
 	}
 	widths := SplitWidths(d.Width, t.Space.Gutter, stackWeights(d.Stacks)...)
 	columns := make([]string, 0, len(d.Stacks))
+	x := 0
 	for i, stack := range d.Stacks {
-		columns = append(columns, renderStack(t, stack, widths[i], d.Height))
+		columns = append(columns, renderStack(t, stack, d.Hits, x, widths[i], d.Height))
+		x += widths[i] + t.Space.Gutter
 	}
 	return joinColumns(columns, Repeat(" ", t.Space.Gutter))
 }
 
-func renderStack(t theme.Theme, s Stack, width, height int) string {
+func renderStack(t theme.Theme, s Stack, hits *HitMap, x, width, height int) string {
 	if len(s.Regions) == 0 {
 		return ""
 	}
 	heights := SplitHeights(height, 0, regionWeights(s.Regions)...)
 	blocks := make([]string, 0, len(s.Regions))
+	y := 0
 	for i, region := range s.Regions {
+		hits.Add(region.Panel.ID, Rect{X: x, Y: y, Width: width, Height: heights[i]})
 		blocks = append(blocks, renderRegion(t, region, width, heights[i]))
+		y += heights[i]
 	}
 	return Column(blocks...)
 }

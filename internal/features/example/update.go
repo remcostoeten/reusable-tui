@@ -10,14 +10,35 @@ import (
 func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	switch typed := msg.(type) {
 	case itemsLoadedMsg:
-		m.items = typed.items
 		m.loading = false
+		if typed.err != nil {
+			return tea.Batch(ui.Idle(busyLoad), ui.Fail(typed.err))
+		}
+		m.items = typed.items
 		m.clampCursor()
-		return nil
+		return ui.Idle(busyLoad)
 	case itemChangedMsg:
-		return tea.Batch(loadItems(m.db), ui.Success(typed.action+" "+typed.title))
+		return tea.Batch(m.reload(), ui.Success(typed.action+" "+typed.title))
+	case ui.ClickMsg:
+		return m.handleClick(typed)
+	case ui.WheelMsg:
+		return m.handleWheel(typed)
 	case tea.KeyMsg:
 		return m.handleKey(typed)
+	}
+	return nil
+}
+
+func (m *Model) handleClick(msg ui.ClickMsg) tea.Cmd {
+	if msg.Panel == keymap.PanelExampleList && !m.loading {
+		m.selectRow(msg.Y)
+	}
+	return nil
+}
+
+func (m *Model) handleWheel(msg ui.WheelMsg) tea.Cmd {
+	if msg.Panel == keymap.PanelExampleList && !m.adding {
+		m.moveCursor(msg.Delta)
 	}
 	return nil
 }
@@ -63,8 +84,7 @@ func (m *Model) handleListKey(msg tea.KeyMsg) tea.Cmd {
 	case key.Matches(msg, m.keys.Example.Delete):
 		return m.mutateSelected(removeSelected)
 	case key.Matches(msg, m.keys.Example.Refresh):
-		m.loading = true
-		return loadItems(m.db)
+		return m.reload()
 	}
 	return nil
 }

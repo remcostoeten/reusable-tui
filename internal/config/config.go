@@ -12,13 +12,23 @@ import (
 
 const fileName = "config.json"
 
+type Session struct {
+	Screen string            `json:"screen,omitempty"`
+	Panels map[string]string `json:"panels,omitempty"`
+}
+
 type Config struct {
 	Theme     string                       `json:"theme"`
 	Overrides map[string]map[string]string `json:"overrides,omitempty"`
+	Session   Session                      `json:"session,omitempty"`
 }
 
 func Defaults() Config {
-	return Config{Theme: "violet-dark", Overrides: map[string]map[string]string{}}
+	return Config{
+		Theme:     "violet-dark",
+		Overrides: map[string]map[string]string{},
+		Session:   Session{Panels: map[string]string{}},
+	}
 }
 
 func Path(appName string) (string, error) {

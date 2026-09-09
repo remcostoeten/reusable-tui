@@ -19,13 +19,8 @@ func (m *Model) View() string {
 }
 
 func (m *Model) frameRows() []string {
-	rows := ui.Lines(ui.RenderHeader(m.theme, ui.Header{
-		App:     Name,
-		Version: Version,
-		Tabs:    m.tabs(),
-		Active:  m.active,
-		Width:   m.width,
-	}))
+	rows := ui.Lines(ui.RenderHeader(m.theme, m.header()))
+	m.hits.Reset()
 	rows = append(rows, ui.Lines(m.ActiveScreen().View(m.context()))...)
 	if m.toast.Visible {
 		rows = append(rows, m.toast.Render(m.theme, m.width))
@@ -34,8 +29,26 @@ func (m *Model) frameRows() []string {
 		Width: m.width,
 		Left:  m.bindings.For(m.focus[m.ActiveScreen().ID()]),
 		Right: m.bindings.Global(),
+		Busy:  m.busyLabel(),
 	}))
 	return rows
+}
+
+func (m *Model) busyLabel() string {
+	if !m.busy.Active() {
+		return ""
+	}
+	return ui.SpinnerFrame(m.theme, m.tick) + " " + m.busy.Label()
+}
+
+func (m *Model) header() ui.Header {
+	return ui.Header{
+		App:     Name,
+		Version: Version,
+		Tabs:    m.tabs(),
+		Active:  m.active,
+		Width:   m.width,
+	}
 }
 
 func (m *Model) paletteWidth() int {

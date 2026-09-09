@@ -18,6 +18,7 @@ func (m *Model) View(ctx ui.RenderContext) string {
 	return ui.RenderDashboard(ctx.Theme, ui.Dashboard{
 		Width:  ctx.Width,
 		Height: ctx.Height,
+		Hits:   ctx.Hits,
 		Stacks: []ui.Stack{
 			{Weight: 5, Regions: []ui.Region{m.accountsRegion(ctx), m.insightsRegion(ctx)}},
 			{Weight: 6, Regions: []ui.Region{m.modeRegion(ctx), m.periodRegion(ctx)}},
@@ -30,6 +31,7 @@ func (m *Model) accountsRegion(ctx ui.RenderContext) ui.Region {
 	return ui.Region{
 		Weight: 2,
 		Panel: ui.Panel{
+			ID:      keymap.PanelDashboardAccounts,
 			Title:   "Accounts",
 			Badge:   money(m.balance()),
 			Hint:    ctx.Jump.Hint(keymap.PanelDashboardAccounts),
@@ -43,6 +45,7 @@ func (m *Model) insightsRegion(ctx ui.RenderContext) ui.Region {
 	return ui.Region{
 		Weight: 3,
 		Panel: ui.Panel{
+			ID:      keymap.PanelDashboardInsights,
 			Title:   "Insights",
 			Badge:   m.periodLabel(),
 			Hint:    ctx.Jump.Hint(keymap.PanelDashboardInsights),
@@ -57,6 +60,7 @@ func (m *Model) modeRegion(ctx ui.RenderContext) ui.Region {
 	return ui.Region{
 		Weight: 2,
 		Panel: ui.Panel{
+			ID:      keymap.PanelDashboardMode,
 			Title:   "View and add",
 			Hint:    ctx.Jump.Hint(keymap.PanelDashboardMode),
 			Focused: focused,
@@ -70,6 +74,7 @@ func (m *Model) periodRegion(ctx ui.RenderContext) ui.Region {
 	return ui.Region{
 		Weight: 3,
 		Panel: ui.Panel{
+			ID:      keymap.PanelDashboardPeriod,
 			Title:   "Period",
 			Hint:    ctx.Jump.Hint(keymap.PanelDashboardPeriod),
 			Focused: focused,
@@ -81,6 +86,7 @@ func (m *Model) periodRegion(ctx ui.RenderContext) ui.Region {
 func (m *Model) overviewRegion(ctx ui.RenderContext) ui.Region {
 	return ui.Region{
 		Panel: ui.Panel{
+			ID:      keymap.PanelDashboardOverview,
 			Title:   "Overview",
 			Hint:    ctx.Jump.Hint(keymap.PanelDashboardOverview),
 			Focused: ctx.Focused == keymap.PanelDashboardOverview,

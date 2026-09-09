@@ -6,6 +6,7 @@ import (
 )
 
 type Panel struct {
+	ID      string
 	Title   string
 	Badge   string
 	Hint    string

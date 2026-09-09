@@ -2,7 +2,8 @@
 
 A production-grade base for terminal UI applications in Go. It ships a full
 application shell (tabs, focus, jump mode, command palette, keymap registry,
-theming, SQLite persistence, migrations, notifications, toasts) and exactly one
+theming, mouse support, session restore, busy indicator, SQLite persistence,
+migrations, notifications, toasts) and exactly one
 throwaway example feature that exercises every pattern end to end. Delete the
 example, keep the shell.
 
@@ -30,6 +31,8 @@ example, keep the shell.
 .goreleaser.yaml
 Makefile
 README.md
+cmd/tui/flags.go
+cmd/tui/flags_test.go
 cmd/tui/main.go
 internal/app/command.go
 internal/app/error.go
@@ -38,7 +41,10 @@ internal/app/format.go
 internal/app/golden_test.go
 internal/app/help_screen.go
 internal/app/helper_test.go
+internal/app/mouse.go
+internal/app/mouse_test.go
 internal/app/root.go
+internal/app/session_test.go
 internal/app/shell_test.go
 internal/app/testdata/TestGoldenDashboardScreen/high-contrast.golden
 internal/app/testdata/TestGoldenDashboardScreen/monochrome.golden
@@ -77,6 +83,7 @@ internal/theme/theme.go
 internal/theme/token.go
 internal/theme/token_test.go
 internal/theme/violet.go
+internal/ui/busy.go
 internal/ui/calendar.go
 internal/ui/chart.go
 internal/ui/command.go
@@ -85,6 +92,7 @@ internal/ui/doc.go
 internal/ui/hatch.go
 internal/ui/hatch_test.go
 internal/ui/header.go
+internal/ui/hit.go
 internal/ui/jump.go
 internal/ui/layout.go
 internal/ui/message.go
@@ -93,6 +101,7 @@ internal/ui/overlay.go
 internal/ui/palette.go
 internal/ui/panel.go
 internal/ui/screen.go
+internal/ui/scroll.go
 internal/ui/segment.go
 internal/ui/skeleton.go
 internal/ui/stat.go
@@ -135,6 +144,50 @@ writes to a model field.
 On the dashboard screen, `k` / `j` move within a list, `h` / `l` step the period
 or switch the view, and `t` jumps back to today.
 
+### Mouse
+
+Mouse support is on by default (`--no-mouse` turns it off). Clicking a header
+tab switches screens, clicking a panel focuses it, and the wheel scrolls
+whatever is under the pointer. Screens never see raw `tea.MouseMsg`: the root
+model translates clicks and wheel events into `ui.ClickMsg` and `ui.WheelMsg`,
+each carrying the panel id and content-local coordinates.
+
+Hit testing works from a `ui.HitMap` that is rebuilt on every render. A screen
+registers each panel's rectangle in body coordinates from its `View`:
+
+```go
+ctx.Hits.Add(keymap.PanelReportsList, ui.Rect{X: 0, Y: 0, Width: widths[0], Height: ctx.Height})
+```
+
+`ui.RenderDashboard` does this for you when a region's `Panel.ID` is set. A
+screen that wants row selection handles `ui.ClickMsg` and reads `Y` as the row
+index; one that wants wheel scrolling handles `ui.WheelMsg` and applies `Delta`
+(`ui.Scroll` does that for a `viewport.Model`).
+
+### Session restore
+
+The active screen and the focused panel of every screen are written to the
+`session` block of the config file on quit, and restored on the next launch.
+Both `q` and the palette's Quit command go through the same path, so nothing
+else needs to know. Unknown screen or panel ids in the file are ignored.
+
+### Busy indicator
+
+Long running commands announce themselves with `ui.Busy(id, label)` and clear
+with `ui.Idle(id)`. While any id is busy the status bar shows a spinner and the
+label, frames taken from `theme.Marker.Spinner` (ASCII in the no-color
+fidelity). The example screen wraps its load:
+
+```go
+func (m *Model) reload() tea.Cmd {
+    m.loading = true
+    return tea.Batch(ui.Busy(busyLoad, "loading items"), loadItems(m.db))
+}
+```
+
+and returns `ui.Idle(busyLoad)` from its result handler on both the success and
+the error path, so a failed query never leaves the spinner running.
+
 ### Data and errors
 
 SQLite lives under `xdg.DataHome`. Migrations are embedded and run on startup.
@@ -163,6 +216,19 @@ make lint
 make golden      # rewrite the golden files after an intentional visual change
 make snapshot    # goreleaser static binaries for darwin/linux, amd64/arm64
 ```
+
+### Flags
+
+| Flag | Effect |
+| --- | --- |
+| `--config path` | use this config file instead of the XDG default |
+| `--db path` | use this SQLite file instead of the XDG default |
+| `--theme name` | start with this theme for the run, without persisting it |
+| `--no-mouse` | leave mouse reporting off |
+| `--version` | print the version and exit |
+
+Point `--config` and `--db` at a scratch directory to run a second instance or
+a fixture next to your real state.
 
 ## Adding a screen
 

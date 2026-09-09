@@ -43,6 +43,8 @@ type Model struct {
 	jump     ui.Jump
 	toast    ui.Toast
 	toastSeq int
+	busy     ui.BusySet
+	hits     *ui.HitMap
 	width    int
 	height   int
 	tick     int
@@ -67,12 +69,15 @@ func New(opts Options) *Model {
 		screens:  screens,
 		focus:    map[string]string{},
 		jump:     ui.NewJump(),
+		busy:     ui.NewBusySet(),
+		hits:     ui.NewHitMap(),
 	}
 	m.registerCommands()
 	m.palette = ui.NewPalette(m.commands)
 	for _, screen := range screens {
 		m.focus[screen.ID()] = screen.Panels()[0]
 	}
+	m.restoreSession(opts.Config.Session)
 	m.applyFocus()
 	return m
 }
@@ -113,6 +118,7 @@ func (m *Model) context() ui.RenderContext {
 		Tick:    m.tick,
 		Focused: m.focus[m.ActiveScreen().ID()],
 		Jump:    m.jump,
+		Hits:    m.hits,
 	}
 }
 

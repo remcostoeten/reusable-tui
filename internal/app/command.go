@@ -43,12 +43,18 @@ func (m *Model) registerCommands() {
 		ID:    "app.quit",
 		Label: "Quit",
 		Group: "app",
-		Run:   tea.Quit,
+		Run:   requestQuit,
 	})
 }
 
 type screenMsg struct {
 	ID string
+}
+
+type quitMsg struct{}
+
+func requestQuit() tea.Msg {
+	return quitMsg{}
 }
 
 func goToScreen(id string) tea.Cmd {

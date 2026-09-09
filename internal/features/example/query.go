@@ -8,7 +8,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/remcostoeten/reusable-tui/internal/store"
-	"github.com/remcostoeten/reusable-tui/internal/ui"
 )
 
 const queryTimeout = 5 * time.Second
@@ -60,8 +59,5 @@ func loadItems(db *sql.DB) tea.Cmd {
 
 func itemsResult(db *sql.DB) tea.Msg {
 	items, err := listItems(db)
-	if err != nil {
-		return ui.ErrorMsg{Err: err}
-	}
-	return itemsLoadedMsg{items: items}
+	return itemsLoadedMsg{items: items, err: err}
 }

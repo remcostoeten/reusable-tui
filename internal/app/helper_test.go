@@ -13,6 +13,7 @@ import (
 	"github.com/remcostoeten/reusable-tui/internal/notify"
 	"github.com/remcostoeten/reusable-tui/internal/store"
 	"github.com/remcostoeten/reusable-tui/internal/theme"
+	"github.com/remcostoeten/reusable-tui/internal/ui"
 )
 
 const (
@@ -80,13 +81,28 @@ func settled(t *testing.T, m *Model) *Model {
 	t.Helper()
 	m.Update(tea.WindowSizeMsg{Width: testWidth, Height: testHeight})
 	for _, screen := range m.screens {
-		cmd := screen.Init()
-		if cmd == nil {
-			continue
-		}
-		m.Update(cmd())
+		drain(m, screen.Init())
 	}
 	return m
+}
+
+func drain(m *Model, cmd tea.Cmd) {
+	if cmd == nil {
+		return
+	}
+	msg := cmd()
+	if batch, ok := msg.(tea.BatchMsg); ok {
+		for _, part := range batch {
+			drain(m, part)
+		}
+		return
+	}
+	switch msg.(type) {
+	case ui.TickMsg, ui.ToastExpiredMsg, nil:
+		return
+	}
+	_, next := m.Update(msg)
+	drain(m, next)
 }
 
 func runProgram(t *testing.T, m *Model, keys ...tea.Msg) *Model {

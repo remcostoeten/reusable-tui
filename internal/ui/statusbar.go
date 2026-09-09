@@ -10,24 +10,33 @@ type StatusBar struct {
 	Width int
 	Left  []key.Binding
 	Right []key.Binding
+	Busy  string
 }
 
 func RenderStatusBar(t theme.Theme, s StatusBar) string {
 	surface := lipgloss.NewStyle().Background(t.Base.Surface)
 	keyStyle := lipgloss.NewStyle().Foreground(t.Accent.Active).Background(t.Base.Surface)
 	labelStyle := lipgloss.NewStyle().Foreground(t.Text.Secondary).Background(t.Base.Surface)
+	busyStyle := lipgloss.NewStyle().Foreground(t.Status.Info.Fg).Background(t.Base.Surface)
 	sep := surface.Render(Repeat(" ", t.Space.Gutter*2))
 
 	budget := s.Width - 2*t.Space.StatusPadX
-	left := fitBindings(s.Left, budget, t)
-	right := fitBindings(s.Right, budget-bindingsWidth(left, t)-t.Space.Gutter*2, t)
-	gap := budget - bindingsWidth(left, t) - bindingsWidth(right, t)
+	busy := ""
+	busyStyled := ""
+	if s.Busy != "" {
+		busy = Repeat(" ", t.Space.Gutter*2) + s.Busy
+		busyStyled = busyStyle.Render(busy)
+	}
+	left := fitBindings(s.Left, budget-Width(busy), t)
+	right := fitBindings(s.Right, budget-bindingsWidth(left, t)-Width(busy)-t.Space.Gutter*2, t)
+	gap := budget - bindingsWidth(left, t) - Width(busy) - bindingsWidth(right, t)
 	if gap < 0 {
 		gap = 0
 	}
 	pad := surface.Render(Repeat(" ", t.Space.StatusPadX))
 	return pad +
 		renderBindings(left, keyStyle, labelStyle, sep) +
+		busyStyled +
 		surface.Render(Repeat(" ", gap)) +
 		renderBindings(right, keyStyle, labelStyle, sep) +
 		pad

@@ -4,13 +4,41 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/remcostoeten/reusable-tui/internal/keymap"
+	"github.com/remcostoeten/reusable-tui/internal/ui"
 )
 
 func (m *Model) Update(msg tea.Msg) tea.Cmd {
-	keyMsg, ok := msg.(tea.KeyMsg)
-	if !ok {
-		return nil
+	switch typed := msg.(type) {
+	case ui.ClickMsg:
+		return m.handleClick(typed)
+	case ui.WheelMsg:
+		return m.handleWheel(typed)
+	case tea.KeyMsg:
+		return m.handleKey(typed)
 	}
+	return nil
+}
+
+func (m *Model) handleClick(msg ui.ClickMsg) tea.Cmd {
+	if msg.Panel == keymap.PanelDashboardAccounts && msg.Y >= 0 && msg.Y < len(m.accounts) {
+		m.cursor = msg.Y
+	}
+	return nil
+}
+
+func (m *Model) handleWheel(msg ui.WheelMsg) tea.Cmd {
+	switch msg.Panel {
+	case keymap.PanelDashboardAccounts:
+		m.moveCursor(msg.Delta)
+	case keymap.PanelDashboardOverview:
+		ui.Scroll(&m.overview, msg.Delta)
+	case keymap.PanelDashboardPeriod, keymap.PanelDashboardInsights:
+		m.shiftPeriod(msg.Delta)
+	}
+	return nil
+}
+
+func (m *Model) handleKey(keyMsg tea.KeyMsg) tea.Cmd {
 	switch m.focused {
 	case keymap.PanelDashboardAccounts:
 		return m.handleAccountsKey(keyMsg)

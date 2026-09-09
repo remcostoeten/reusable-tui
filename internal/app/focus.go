@@ -1,5 +1,7 @@
 package app
 
+import "github.com/remcostoeten/reusable-tui/internal/config"
+
 func (m *Model) applyFocus() {
 	screen := m.ActiveScreen()
 	screen.Focus(m.focus[screen.ID()])
@@ -50,4 +52,25 @@ func indexOf(values []string, target string) int {
 		}
 	}
 	return -1
+}
+
+func (m *Model) restoreSession(session config.Session) {
+	for screenID, panelID := range session.Panels {
+		for _, screen := range m.screens {
+			if screen.ID() == screenID && indexOf(screen.Panels(), panelID) >= 0 {
+				m.focus[screenID] = panelID
+			}
+		}
+	}
+	if session.Screen != "" {
+		m.selectTab(session.Screen)
+	}
+}
+
+func (m *Model) session() config.Session {
+	panels := make(map[string]string, len(m.focus))
+	for screenID, panelID := range m.focus {
+		panels[screenID] = panelID
+	}
+	return config.Session{Screen: m.ActiveScreen().ID(), Panels: panels}
 }

@@ -56,6 +56,10 @@ func (s *helpScreen) Capturing() bool {
 }
 
 func (s *helpScreen) Update(msg tea.Msg) tea.Cmd {
+	if wheel, ok := msg.(ui.WheelMsg); ok {
+		ui.Scroll(&s.view, wheel.Delta)
+		return nil
+	}
 	keyMsg, ok := msg.(tea.KeyMsg)
 	if !ok {
 		return nil
@@ -70,7 +74,9 @@ func (s *helpScreen) Update(msg tea.Msg) tea.Cmd {
 }
 
 func (s *helpScreen) View(ctx ui.RenderContext) string {
+	ctx.Hits.Add(keymap.PanelHelp, ui.Rect{X: 0, Y: 0, Width: ctx.Width, Height: ctx.Height})
 	panel := ui.Panel{
+		ID:      keymap.PanelHelp,
 		Title:   "Keybindings",
 		Hint:    ctx.Jump.Hint(keymap.PanelHelp),
 		Width:   ctx.Width,

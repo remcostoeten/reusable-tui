@@ -18,6 +18,16 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case ui.ToastExpiredMsg:
 		m.expireToast(typed.Seq)
 		return m, nil
+	case ui.BusyMsg:
+		m.busy.Start(typed.ID, typed.Label)
+		return m, nil
+	case ui.IdleMsg:
+		m.busy.Stop(typed.ID)
+		return m, nil
+	case quitMsg:
+		return m, m.quit()
+	case tea.MouseMsg:
+		return m, m.handleMouse(typed)
 	case ui.ErrorMsg:
 		return m, m.showToast(typed.Err.Error(), ui.ToastError)
 	case ui.InfoMsg:
@@ -85,7 +95,7 @@ func (m *Model) handleJumpKey(msg tea.KeyMsg) tea.Cmd {
 func (m *Model) handleGlobalKey(msg tea.KeyMsg) (tea.Cmd, bool) {
 	switch {
 	case key.Matches(msg, m.keys.Global.Quit):
-		return tea.Quit, true
+		return m.quit(), true
 	case key.Matches(msg, m.keys.Global.NextTab):
 		m.cycleTab(1)
 		return nil, true
@@ -142,4 +152,12 @@ func (m *Model) adoptThemes(msg themesReloadedMsg) tea.Cmd {
 		return ui.Warn(warning)
 	}
 	return ui.Success("themes reloaded")
+}
+
+func (m *Model) quit() tea.Cmd {
+	m.opts.Config.Session = m.session()
+	if m.opts.ConfigPath == "" {
+		return tea.Quit
+	}
+	return tea.Sequence(persistConfig(m.opts.ConfigPath, m.opts.Config), tea.Quit)
 }
