@@ -1,0 +1,37 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - errcheck
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - revive
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+  settings:
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+  exclusions:
+    generated: lax
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+          - unparam
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
