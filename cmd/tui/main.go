@@ -37,7 +37,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	model := app.New(app.Options{
 		Store:      db,

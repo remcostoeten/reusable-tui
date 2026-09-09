@@ -16,7 +16,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.tick++
 		return m, tea.Batch(ui.Tick(), m.broadcast(msg))
 	case ui.ToastExpiredMsg:
-		return m, m.expireToast(typed.Seq)
+		m.expireToast(typed.Seq)
+		return m, nil
 	case ui.ErrorMsg:
 		return m, m.showToast(typed.Err.Error(), ui.ToastError)
 	case ui.InfoMsg:
@@ -110,11 +111,10 @@ func (m *Model) showToast(text string, kind ui.ToastKind) tea.Cmd {
 	return ui.ExpireToast(m.toastSeq)
 }
 
-func (m *Model) expireToast(seq int) tea.Cmd {
+func (m *Model) expireToast(seq int) {
 	if m.toast.Seq == seq {
 		m.toast.Visible = false
 	}
-	return nil
 }
 
 func (m *Model) switchTheme(name string) tea.Cmd {

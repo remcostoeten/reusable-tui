@@ -27,7 +27,7 @@ func listItems(db *sql.DB) ([]Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	items := make([]Item, 0)
 	for rows.Next() {
 		var item Item
