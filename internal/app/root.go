@@ -1,8 +1,11 @@
 package app
 
 import (
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/remcostoeten/reusable-tui/internal/config"
+	"github.com/remcostoeten/reusable-tui/internal/features/dashboard"
 	"github.com/remcostoeten/reusable-tui/internal/features/example"
 	"github.com/remcostoeten/reusable-tui/internal/keymap"
 	"github.com/remcostoeten/reusable-tui/internal/notify"
@@ -24,6 +27,7 @@ type Options struct {
 	ThemeDir   string
 	Fidelity   theme.Fidelity
 	Warnings   []error
+	Clock      func() time.Time
 }
 
 type Model struct {
@@ -46,8 +50,12 @@ type Model struct {
 
 func New(opts Options) *Model {
 	keys := keymap.Default()
+	if opts.Clock == nil {
+		opts.Clock = time.Now
+	}
 	screens := []ui.Screen{
 		example.New(opts.Store.DB(), keys),
+		dashboard.New(keys, opts.Clock),
 		newHelpScreen(keys),
 	}
 	m := &Model{

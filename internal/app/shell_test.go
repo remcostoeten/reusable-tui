@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/remcostoeten/reusable-tui/internal/features/dashboard"
 	"github.com/remcostoeten/reusable-tui/internal/keymap"
 	"github.com/remcostoeten/reusable-tui/internal/theme"
 	"github.com/remcostoeten/reusable-tui/internal/ui"
@@ -13,7 +14,7 @@ import (
 func TestTabCycling(t *testing.T) {
 	db := newTestStore(t)
 	final := runProgram(t, newTestModel(t, db), special(tea.KeyTab))
-	if got := final.ActiveScreen().ID(); got != helpScreenID {
+	if got := final.ActiveScreen().ID(); got != dashboard.ScreenID {
 		t.Fatalf("tab did not advance, active screen is %q", got)
 	}
 	final = runProgram(t, newTestModel(t, db), special(tea.KeyTab), special(tea.KeyShiftTab))
@@ -124,5 +125,34 @@ func TestErrorToast(t *testing.T) {
 	m.Update(ui.ToastExpiredMsg{Seq: m.toast.Seq})
 	if m.toast.Visible {
 		t.Fatal("toast did not expire")
+	}
+}
+
+func TestDashboardLayout(t *testing.T) {
+	db := newTestStore(t)
+	final := runProgram(t, newTestModel(t, db), special(tea.KeyTab))
+	body := ui.Lines(final.ActiveScreen().View(final.context()))
+	if len(body) != final.bodyHeight() {
+		t.Fatalf("dashboard height %d does not match layout %d", len(body), final.bodyHeight())
+	}
+	for i, row := range body {
+		if width := ui.Width(row); width != testWidth {
+			t.Fatalf("dashboard row %d width %d does not match terminal width %d", i, width, testWidth)
+		}
+	}
+}
+
+func TestDashboardPeriodKeys(t *testing.T) {
+	db := newTestStore(t)
+	final := runProgram(t, newTestModel(t, db),
+		special(tea.KeyTab),
+		runes("f"), runes("f"),
+		runes("l"),
+	)
+	if got := final.focus[dashboard.ScreenID]; got != keymap.PanelDashboardPeriod {
+		t.Fatalf("jump did not focus the period panel, focused panel is %q", got)
+	}
+	if !strings.Contains(final.ActiveScreen().View(final.context()), "Jan 21") {
+		t.Fatal("next period did not advance the calendar")
 	}
 }

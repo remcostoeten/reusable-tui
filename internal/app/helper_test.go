@@ -63,12 +63,17 @@ func seed(t *testing.T, db *store.Store) {
 func newTestModel(t *testing.T, db *store.Store) *Model {
 	t.Helper()
 	return New(Options{
+		Clock:    fixedClock,
 		Store:    db,
 		Config:   config.Defaults(),
 		Notifier: notify.Discard{},
 		Themes:   theme.Builtin(),
 		Fidelity: theme.FidelityTrueColor,
 	})
+}
+
+func fixedClock() time.Time {
+	return time.Date(2024, time.January, 17, 9, 0, 0, 0, time.UTC)
 }
 
 func settled(t *testing.T, m *Model) *Model {

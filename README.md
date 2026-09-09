@@ -40,6 +40,9 @@ internal/app/help_screen.go
 internal/app/helper_test.go
 internal/app/root.go
 internal/app/shell_test.go
+internal/app/testdata/TestGoldenDashboardScreen/high-contrast.golden
+internal/app/testdata/TestGoldenDashboardScreen/monochrome.golden
+internal/app/testdata/TestGoldenDashboardScreen/violet-dark.golden
 internal/app/testdata/TestGoldenExampleScreen/high-contrast.golden
 internal/app/testdata/TestGoldenExampleScreen/monochrome.golden
 internal/app/testdata/TestGoldenExampleScreen/violet-dark.golden
@@ -47,6 +50,10 @@ internal/app/theme_test.go
 internal/app/update.go
 internal/app/view.go
 internal/config/config.go
+internal/features/dashboard/model.go
+internal/features/dashboard/query.go
+internal/features/dashboard/update.go
+internal/features/dashboard/view.go
 internal/features/example/message.go
 internal/features/example/model.go
 internal/features/example/mutation.go
@@ -70,7 +77,11 @@ internal/theme/theme.go
 internal/theme/token.go
 internal/theme/token_test.go
 internal/theme/violet.go
+internal/ui/calendar.go
+internal/ui/chart.go
 internal/ui/command.go
+internal/ui/dashboard.go
+internal/ui/doc.go
 internal/ui/hatch.go
 internal/ui/header.go
 internal/ui/jump.go
@@ -81,7 +92,9 @@ internal/ui/overlay.go
 internal/ui/palette.go
 internal/ui/panel.go
 internal/ui/screen.go
+internal/ui/segment.go
 internal/ui/skeleton.go
+internal/ui/stat.go
 internal/ui/statusbar.go
 internal/ui/text.go
 internal/ui/tick.go
@@ -117,6 +130,9 @@ writes to a model field.
 | `ctrl+k` | command palette |
 | `?` | help screen |
 | `q` / `ctrl+c` | quit |
+
+On the dashboard screen, `k` / `j` move within a list, `h` / `l` step the period
+or switch the view, and `t` jumps back to today.
 
 ### Data and errors
 
@@ -193,6 +209,71 @@ reach it. Use `ui.SplitWidths` and `ui.Row` for multi-panel layouts, and
 `ui.EmptyState` / `ui.Skeleton` for the empty and loading bodies. Never hardcode
 a width: everything derives from `ctx.Width` and `ctx.Height`, which come from
 `tea.WindowSizeMsg`.
+
+## The dashboard layout
+
+`internal/features/dashboard` is an optional second example screen: a three
+column dashboard with stacked panels, the shape most tracker style TUIs use.
+It is data free and store free, so it stays a layout reference.
+
+```
++-------------+---------------+-----------------------+
+| Accounts    | View and add  | Overview              |
++-------------+---------------+                       |
+| Insights    | Period        |                       |
++-------------+---------------+-----------------------+
+```
+
+`ui.RenderDashboard` takes stacks and regions instead of manual widths:
+
+```go
+ui.RenderDashboard(ctx.Theme, ui.Dashboard{
+    Width:  ctx.Width,
+    Height: ctx.Height,
+    Stacks: []ui.Stack{
+        {Weight: 5, Regions: []ui.Region{accounts, insights}},
+        {Weight: 6, Regions: []ui.Region{mode, period}},
+        {Weight: 9, Regions: []ui.Region{overview}},
+    },
+})
+```
+
+Stack weights split the width, region weights split each column's height, and a
+region's `Body` is called with the measured content size, so a widget never
+guesses its own box:
+
+```go
+ui.Region{
+    Weight: 3,
+    Panel:  ui.Panel{Title: "Insights", Focused: ctx.Focused == keymap.PanelDashboardInsights},
+    Body:   func(t theme.Theme, width, height int) string { return chart(t, width, height) },
+}
+```
+
+One stack with one region is a full screen pane, two stacks are a sidebar plus a
+main area. Nothing else in the shell changes: focus cycling, jump mode, the
+status bar and the help screen read the same registries as any other screen.
+
+### Widgets
+
+| Component | Purpose |
+| --- | --- |
+| `ui.RenderSegment` | inline tab strip inside a panel |
+| `ui.RenderPeriod` | `<<< label >>>` period stepper |
+| `ui.RenderCalendar` | month grid with a selected day and a week band |
+| `ui.RenderStats` | label and value pairs across a row |
+| `ui.RenderBarChart` | block glyph bars with optional labels |
+| `ui.RenderDoc` | headings, wrapped text, bullets, rules and callouts |
+
+They take a `theme.Theme` and explicit sizes, so they work in any panel, not
+only in this screen.
+
+### Removing it
+
+Delete `internal/features/dashboard/`, drop the `dashboard.New(...)` entry from
+the `screens` slice in `internal/app/root.go`, and remove the `PanelDashboard*`
+constants and `DashboardKeys` from `internal/keymap/bindings.go`. The layout and
+widget primitives in `internal/ui` stay usable on their own.
 
 ## Adding a keybinding
 
@@ -315,9 +396,10 @@ is the only path a command needs.
 ## Tests
 
 `go test ./...` covers, through `teatest`, tab cycling, focus cycling, jump mode,
-palette search, theme switching, window resize and the minimum-size guard, plus
-token round-tripping, user theme files, config overrides, export and reload. A
-golden-file test renders the example screen once per builtin theme, so an
+palette search, theme switching, window resize, the minimum-size guard and the
+dashboard layout's size integrity, plus token round-tripping, user theme files,
+config overrides, export and reload. Golden-file tests render the example screen
+and the dashboard screen once per builtin theme, so an
 unintended aesthetic change fails CI. Regenerate the goldens with `make golden`
 only when the change is intentional.
 

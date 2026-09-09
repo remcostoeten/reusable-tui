@@ -6,6 +6,12 @@ const (
 	PanelExampleList   = "example.list"
 	PanelExampleDetail = "example.detail"
 	PanelHelp          = "help.body"
+
+	PanelDashboardAccounts = "dashboard.accounts"
+	PanelDashboardInsights = "dashboard.insights"
+	PanelDashboardMode     = "dashboard.mode"
+	PanelDashboardPeriod   = "dashboard.period"
+	PanelDashboardOverview = "dashboard.overview"
 )
 
 type GlobalKeys struct {
@@ -31,15 +37,24 @@ type ExampleKeys struct {
 	Notify  key.Binding
 }
 
+type DashboardKeys struct {
+	Up    key.Binding
+	Down  key.Binding
+	Prev  key.Binding
+	Next  key.Binding
+	Today key.Binding
+}
+
 type HelpKeys struct {
 	ScrollUp   key.Binding
 	ScrollDown key.Binding
 }
 
 type Keys struct {
-	Global  GlobalKeys
-	Example ExampleKeys
-	Help    HelpKeys
+	Global    GlobalKeys
+	Example   ExampleKeys
+	Dashboard DashboardKeys
+	Help      HelpKeys
 }
 
 func Default() Keys {
@@ -64,6 +79,13 @@ func Default() Keys {
 			Delete:  key.NewBinding(key.WithKeys("d"), key.WithHelp("d", "delete")),
 			Refresh: key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "refresh")),
 			Notify:  key.NewBinding(key.WithKeys("n"), key.WithHelp("n", "notify")),
+		},
+		Dashboard: DashboardKeys{
+			Up:    key.NewBinding(key.WithKeys("up", "k"), key.WithHelp("k", "up")),
+			Down:  key.NewBinding(key.WithKeys("down", "j"), key.WithHelp("j", "down")),
+			Prev:  key.NewBinding(key.WithKeys("left", "h"), key.WithHelp("h", "prev")),
+			Next:  key.NewBinding(key.WithKeys("right", "l"), key.WithHelp("l", "next")),
+			Today: key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "today")),
 		},
 		Help: HelpKeys{
 			ScrollUp:   key.NewBinding(key.WithKeys("up", "k"), key.WithHelp("k", "scroll up")),
@@ -94,6 +116,27 @@ func (k Keys) Registry() *Registry {
 	)
 	r.Register(PanelExampleDetail, "Detail",
 		k.Example.Notify,
+	)
+	r.Register(PanelDashboardAccounts, "Accounts",
+		k.Dashboard.Up,
+		k.Dashboard.Down,
+	)
+	r.Register(PanelDashboardInsights, "Insights",
+		k.Dashboard.Prev,
+		k.Dashboard.Next,
+	)
+	r.Register(PanelDashboardMode, "View and add",
+		k.Dashboard.Prev,
+		k.Dashboard.Next,
+	)
+	r.Register(PanelDashboardPeriod, "Period",
+		k.Dashboard.Prev,
+		k.Dashboard.Next,
+		k.Dashboard.Today,
+	)
+	r.Register(PanelDashboardOverview, "Overview",
+		k.Dashboard.Up,
+		k.Dashboard.Down,
 	)
 	r.Register(PanelHelp, "Help",
 		k.Help.ScrollUp,

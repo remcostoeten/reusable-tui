@@ -3,6 +3,21 @@ package ui
 import "github.com/remcostoeten/reusable-tui/internal/theme"
 
 func Row(t theme.Theme, blocks ...string) string {
+	return joinColumns(blocks, Repeat(" ", t.Space.Gutter))
+}
+
+func Column(blocks ...string) string {
+	rows := make([]string, 0, len(blocks))
+	for _, block := range blocks {
+		if block == "" {
+			continue
+		}
+		rows = append(rows, Lines(block)...)
+	}
+	return Join(rows)
+}
+
+func joinColumns(blocks []string, gutter string) string {
 	if len(blocks) == 0 {
 		return ""
 	}
@@ -14,7 +29,6 @@ func Row(t theme.Theme, blocks ...string) string {
 			height = len(columns[i])
 		}
 	}
-	gutter := Repeat(" ", t.Space.Gutter)
 	rows := make([]string, 0, height)
 	for y := 0; y < height; y++ {
 		line := ""
@@ -32,6 +46,14 @@ func Row(t theme.Theme, blocks ...string) string {
 }
 
 func SplitWidths(total, gutter int, weights ...int) []int {
+	return split(total, gutter, weights)
+}
+
+func SplitHeights(total, gutter int, weights ...int) []int {
+	return split(total, gutter, weights)
+}
+
+func split(total, gutter int, weights []int) []int {
 	sum := 0
 	for _, w := range weights {
 		sum += w
@@ -39,10 +61,13 @@ func SplitWidths(total, gutter int, weights ...int) []int {
 	available := total - gutter*(len(weights)-1)
 	out := make([]int, len(weights))
 	used := 0
-	for i := 0; i < len(weights)-1; i++ {
-		out[i] = available * weights[i] / sum
+	for i, weight := range weights {
+		out[i] = available * weight / sum
 		used += out[i]
 	}
-	out[len(weights)-1] = available - used
+	for i := 0; used < available; i = (i + 1) % len(out) {
+		out[i]++
+		used++
+	}
 	return out
 }

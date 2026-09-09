@@ -71,3 +71,32 @@ func Block(s string, width, height int) []string {
 func Join(lines []string) string {
 	return strings.Join(lines, "\n")
 }
+
+func Wrap(s string, width int) []string {
+	if width <= 0 {
+		return nil
+	}
+	out := make([]string, 0, 4)
+	for _, paragraph := range Lines(s) {
+		out = append(out, wrapLine(paragraph, width)...)
+	}
+	return out
+}
+
+func wrapLine(s string, width int) []string {
+	words := strings.Fields(s)
+	if len(words) == 0 {
+		return []string{""}
+	}
+	rows := make([]string, 0, 4)
+	current := words[0]
+	for _, word := range words[1:] {
+		if Width(current)+1+Width(word) > width {
+			rows = append(rows, current)
+			current = word
+			continue
+		}
+		current += " " + word
+	}
+	return append(rows, current)
+}
