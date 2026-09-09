@@ -1,0 +1,20 @@
+package store
+
+import (
+	"database/sql"
+	"embed"
+
+	"github.com/pressly/goose/v3"
+)
+
+//go:embed migrations/*.sql
+var migrations embed.FS
+
+func Migrate(db *sql.DB) error {
+	goose.SetLogger(goose.NopLogger())
+	goose.SetBaseFS(migrations)
+	if err := goose.SetDialect("sqlite3"); err != nil {
+		return err
+	}
+	return goose.Up(db, "migrations")
+}
