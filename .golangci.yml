@@ -1,0 +1,27 @@
+version: "2"
+
+linters:
+  default: standard
+  settings:
+    depguard:
+      rules:
+        framework-must-not-know-domain:
+          files:
+            - "**/internal/tui/**"
+          deny:
+            - pkg: "github.com/remcostoeten/reusable-tui/internal/modules"
+              desc: "the shell must never depend on a domain module"
+        widgets-stay-pure:
+          files:
+            - "**/internal/tui/ui/**"
+          deny:
+            - pkg: "github.com/remcostoeten/reusable-tui/internal/tui/navigation"
+              desc: "widgets take props, not framework state"
+            - pkg: "github.com/remcostoeten/reusable-tui/internal/tui/focus"
+              desc: "a widget takes Focused bool, not a focus.State"
+            - pkg: "github.com/remcostoeten/reusable-tui/internal/tui/input"
+              desc: "a widget takes []ui.Hint, not a keymap"
+            - pkg: "github.com/remcostoeten/reusable-tui/internal/tui/command"
+              desc: "a widget takes a command.ID as an opaque string, not the registry"
+            - pkg: "github.com/remcostoeten/reusable-tui/internal/tui/shell"
+              desc: "widgets are below the shell, never above it"
