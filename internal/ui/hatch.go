@@ -5,12 +5,15 @@ import (
 	"github.com/remcostoeten/reusable-tui/internal/theme"
 )
 
-const hatchPeriod = 3
+const (
+	hatchPeriod = 2
+	hatchSlope  = 1
+)
 
 func hatchRow(t theme.Theme, width, row int) []string {
 	cells := make([]string, width)
 	for x := 0; x < width; x++ {
-		if (x+row)%hatchPeriod == 0 {
+		if (x+row*hatchSlope)%hatchPeriod == 0 {
 			cells[x] = t.Marker.Hatch
 			continue
 		}
