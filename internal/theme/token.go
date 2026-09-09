@@ -43,6 +43,10 @@ const (
 	TokenStatusInfoFg       = "status.info.fg"
 	TokenStatusInfoLabel    = "status.info.label"
 	TokenStatusInfoGlyph    = "status.info.glyph"
+
+	TokenMarkerEmpty = "marker.empty"
+	TokenMarkerHatch = "marker.hatch"
+	TokenMarkerDot   = "marker.dot"
 )
 
 const (
@@ -83,6 +87,9 @@ var tokenOrder = []string{
 	TokenStatusInfoFg,
 	TokenStatusInfoLabel,
 	TokenStatusInfoGlyph,
+	TokenMarkerEmpty,
+	TokenMarkerHatch,
+	TokenMarkerDot,
 }
 
 var (
@@ -114,6 +121,18 @@ func FormatColor(color lipgloss.TerminalColor) string {
 		return string(plain)
 	}
 	return ""
+}
+
+func ParseEmptyPattern(name string) (EmptyPattern, error) {
+	switch EmptyPattern(name) {
+	case EmptyPatternSlash:
+		return EmptyPatternSlash, nil
+	case EmptyPatternDots:
+		return EmptyPatternDots, nil
+	case EmptyPatternNone:
+		return EmptyPatternNone, nil
+	}
+	return "", tokenError(ErrInvalidValue, name)
 }
 
 func ParseBorder(name string) (lipgloss.Border, error) {
@@ -208,11 +227,20 @@ func ReadToken(t Theme, path string) (string, error) {
 		return t.Status.Info.Label, nil
 	case TokenStatusInfoGlyph:
 		return t.Status.Info.Glyph, nil
+	case TokenMarkerEmpty:
+		return string(t.Marker.Empty), nil
+	case TokenMarkerHatch:
+		return t.Marker.Hatch, nil
+	case TokenMarkerDot:
+		return t.Marker.Dot, nil
 	}
 	return "", tokenError(ErrUnknownToken, path)
 }
 
 func WriteToken(t Theme, path, value string) (Theme, error) {
+	if strings.HasPrefix(path, markerPrefix) {
+		return writeMarker(t, path, value)
+	}
 	if strings.HasSuffix(path, ".set") {
 		return writeBorderSet(t, path, value)
 	}
@@ -220,6 +248,35 @@ func WriteToken(t Theme, path, value string) (Theme, error) {
 		return writeStatusText(t, path, value)
 	}
 	return writeColorToken(t, path, value)
+}
+
+const markerPrefix = "marker."
+
+func writeMarker(t Theme, path, value string) (Theme, error) {
+	if path == TokenMarkerEmpty {
+		return writeEmptyPattern(t, value)
+	}
+	if value == "" {
+		return t, tokenError(ErrInvalidValue, path)
+	}
+	switch path {
+	case TokenMarkerHatch:
+		t.Marker.Hatch = value
+	case TokenMarkerDot:
+		t.Marker.Dot = value
+	default:
+		return t, tokenError(ErrUnknownToken, path)
+	}
+	return t, nil
+}
+
+func writeEmptyPattern(t Theme, value string) (Theme, error) {
+	pattern, err := ParseEmptyPattern(value)
+	if err != nil {
+		return t, fmt.Errorf("%s: %w", TokenMarkerEmpty, err)
+	}
+	t.Marker.Empty = pattern
+	return t, nil
 }
 
 func writeColorToken(t Theme, path, value string) (Theme, error) {

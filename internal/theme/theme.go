@@ -72,12 +72,22 @@ type SpaceTokens struct {
 	MinHeight  int
 }
 
+type EmptyPattern string
+
+const (
+	EmptyPatternSlash EmptyPattern = "slash"
+	EmptyPatternDots  EmptyPattern = "dots"
+	EmptyPatternNone  EmptyPattern = "none"
+)
+
 type MarkerTokens struct {
 	FocusOpen     string
 	FocusClose    string
 	HintOpen      string
 	HintClose     string
 	Hatch         string
+	Dot           string
+	Empty         EmptyPattern
 	Skeleton      string
 	Rule          string
 	Bullet        string
@@ -145,6 +155,8 @@ func defaultMarkers() MarkerTokens {
 		HintOpen:      "(",
 		HintClose:     ")",
 		Hatch:         "/",
+		Dot:           "·",
+		Empty:         EmptyPatternSlash,
 		Skeleton:      "█",
 		Rule:          "─",
 		Bullet:        "·",

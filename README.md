@@ -83,6 +83,7 @@ internal/ui/command.go
 internal/ui/dashboard.go
 internal/ui/doc.go
 internal/ui/hatch.go
+internal/ui/hatch_test.go
 internal/ui/header.go
 internal/ui/jump.go
 internal/ui/layout.go
@@ -358,14 +359,25 @@ from a config override or a theme file.
 | `accent` | `active`, `mid`, `dim` |
 | `border` | `focused`, `unfocused`, `subtle`, `focused.set`, `unfocused.set` |
 | `status.<state>` | `fg`, `label`, `glyph` for `success`, `warning`, `danger`, `info` |
+| `marker` | `empty`, `hatch`, `dot` |
 
 Color values are `#RGB`, `#RRGGBB`, or an ANSI index `0`-`255`. Border set
 values are `rounded`, `normal`, `thick`, `double`, `block` or `hidden`.
 
+`marker.empty` picks the fill behind an empty panel body: `slash` (the default
+diagonal hatch), `dots` (a sparse dot grid) or `none` (blank, label only).
+`marker.hatch` and `marker.dot` swap the glyphs those two patterns draw with.
+
+```json
+{
+  "theme": "violet-dark",
+  "overrides": { "violet-dark": { "marker.empty": "dots" } }
+}
+```
+
 Every semantic state carries a color, a text label and an ASCII glyph, so no
 state is signalled by color alone; recoloring a status token never makes it
-unreadable. Spacing and marker glyphs stay in Go, in `theme.SpaceTokens` and
-`theme.MarkerTokens`.
+unreadable. Spacing stays in Go, in `theme.SpaceTokens`.
 
 ### Adding a token
 

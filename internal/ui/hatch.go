@@ -8,16 +8,39 @@ import (
 const (
 	hatchPeriod = 2
 	hatchSlope  = 1
+	dotStepX    = 3
+	dotStepY    = 2
 )
 
-func hatchRow(t theme.Theme, width, row int) []string {
+func slashCell(t theme.Theme, x, y int) string {
+	if (x+y*hatchSlope)%hatchPeriod == 0 {
+		return t.Marker.Hatch
+	}
+	return " "
+}
+
+func dotCell(t theme.Theme, x, y int) string {
+	if x%dotStepX == 0 && y%dotStepY == 0 {
+		return t.Marker.Dot
+	}
+	return " "
+}
+
+func patternCell(t theme.Theme, x, y int) string {
+	switch t.Marker.Empty {
+	case theme.EmptyPatternDots:
+		return dotCell(t, x, y)
+	case theme.EmptyPatternNone:
+		return " "
+	default:
+		return slashCell(t, x, y)
+	}
+}
+
+func patternRow(t theme.Theme, width, row int) []string {
 	cells := make([]string, width)
 	for x := 0; x < width; x++ {
-		if (x+row*hatchSlope)%hatchPeriod == 0 {
-			cells[x] = t.Marker.Hatch
-			continue
-		}
-		cells[x] = " "
+		cells[x] = patternCell(t, x, row)
 	}
 	return cells
 }
@@ -26,7 +49,7 @@ func Hatch(t theme.Theme, width, height int) string {
 	style := lipgloss.NewStyle().Foreground(t.Border.Subtle).Background(t.Base.Background)
 	rows := make([]string, 0, height)
 	for y := 0; y < height; y++ {
-		rows = append(rows, style.Render(Join(hatchRow(t, width, y))))
+		rows = append(rows, style.Render(joinCells(patternRow(t, width, y))))
 	}
 	return Join(rows)
 }
@@ -35,7 +58,7 @@ func EmptyState(t theme.Theme, width, height int, label string) string {
 	if width <= 0 || height <= 0 {
 		return ""
 	}
-	hatchStyle := lipgloss.NewStyle().Foreground(t.Border.Subtle).Background(t.Base.Background)
+	fillStyle := lipgloss.NewStyle().Foreground(t.Border.Subtle).Background(t.Base.Background)
 	labelStyle := lipgloss.NewStyle().Foreground(t.Text.Secondary).Background(t.Base.Background)
 	text := " " + Truncate(label, width-2) + " "
 	mid := height / 2
@@ -45,13 +68,13 @@ func EmptyState(t theme.Theme, width, height int, label string) string {
 	}
 	rows := make([]string, 0, height)
 	for y := 0; y < height; y++ {
-		cells := hatchRow(t, width, y)
+		cells := patternRow(t, width, y)
 		if y != mid {
-			rows = append(rows, hatchStyle.Render(joinCells(cells)))
+			rows = append(rows, fillStyle.Render(joinCells(cells)))
 			continue
 		}
-		left := hatchStyle.Render(joinCells(cells[:start]))
-		right := hatchStyle.Render(joinCells(cells[start+Width(text):]))
+		left := fillStyle.Render(joinCells(cells[:start]))
+		right := fillStyle.Render(joinCells(cells[start+Width(text):]))
 		rows = append(rows, left+labelStyle.Render(text)+right)
 	}
 	return Join(rows)
