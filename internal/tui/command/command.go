@@ -87,6 +87,13 @@ func WhenNoOverlay() Predicate {
 	return func(s Scope) bool { return s.Overlay == "" }
 }
 
+// WhenOverlay passes while something is stacked over the frame. Gating the
+// overlay layer on it is what stops esc from being swallowed there when
+// nothing is open.
+func WhenOverlay() Predicate {
+	return func(s Scope) bool { return s.Overlay != "" }
+}
+
 // Runner performs a command. It receives the scope the command was invoked in
 // and returns a tea.Cmd, so commands are async by default and never block the
 // event loop. Anything else a command needs — a service, a client, a config

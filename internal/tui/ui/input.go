@@ -96,13 +96,24 @@ func (i Input) Render(rc render.Context) string {
 	}
 	st := rc.Styles()
 
-	if len(i.runes) == 0 && !i.Focused {
-		return st.InputPlaceholder.Render(render.Fit(i.Placeholder, width, render.Left, rc.Glyphs.Ellipsis))
+	if !i.Focused {
+		if len(i.runes) == 0 {
+			return st.InputPlaceholder.Render(render.Fit(i.Placeholder, width, render.Left, rc.Glyphs.Ellipsis))
+		}
+		return st.InputText.Render(render.Fit(string(i.runes), width, render.Left, rc.Glyphs.Ellipsis))
 	}
 
-	text := string(i.runes)
-	if !i.Focused {
-		return st.InputText.Render(render.Fit(text, width, render.Left, rc.Glyphs.Ellipsis))
+	// An empty focused field keeps its placeholder, with the cursor sitting on
+	// the first cell of it: a blank line tells the user nothing about what to
+	// type here.
+	if len(i.runes) == 0 {
+		hint := []rune(i.Placeholder)
+		if len(hint) == 0 {
+			return st.InputCursor.Render(" ") + strings.Repeat(" ", max(0, width-1))
+		}
+		body := st.InputCursor.Render(string(hint[0])) +
+			st.InputPlaceholder.Render(render.Truncate(string(hint[1:]), max(0, width-1), rc.Glyphs.Ellipsis))
+		return render.Pad(body, width, render.Left)
 	}
 
 	before := string(i.runes[:i.cursor])

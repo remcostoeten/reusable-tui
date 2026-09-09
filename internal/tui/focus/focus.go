@@ -325,3 +325,18 @@ func (s State) orderOf(id ID) int {
 	}
 	return 0
 }
+
+// SwitchScope replaces the whole stack with one scope. Navigating between
+// sections uses it rather than a push, because a section is not stacked over
+// the one before it — but the memory of what was focused there survives.
+func (s State) SwitchScope(id ScopeID, regions []Region) State {
+	scope := Scope{ID: id, regions: ordered(regions)}
+	scope.current = s.memory[id]
+	if !reachable(scope.regions, scope.current) {
+		scope.current = firstReachable(scope.regions)
+	}
+
+	s.scopes = []Scope{scope}
+	s.jump = false
+	return s.remember()
+}

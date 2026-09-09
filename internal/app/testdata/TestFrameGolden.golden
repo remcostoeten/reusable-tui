@@ -1,0 +1,132 @@
+--- dark ---
+ [38;2;156;140;245m▸[m [38;2;232;229;242;1mdemo[m [38;2;114;107;138m0.1.0[m  [38;2;16;13;26;48;2;156;140;245;1m Home [m [38;2;154;147;176m Manager [m [38;2;154;147;176m Settings [m
+[38;2;16;13;26;48;2;156;140;245;1m H   [38;2;44;40;66;49;22m╭[m [38;2;154;147;176mSources[m [38;2;44;40;66m─────────────╮╭[m [38;2;154;147;176mOverview[m [38;2;44;40;66m───────────────────────────────────────╮[m
+[38;2;154;147;176m M   [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m [38;2;16;13;26;48;2;156;140;245;1m Active [m [38;2;154;147;176m Archived [m [38;2;154;147;176m All [m                       [38;2;44;40;66m│[m
+[38;2;154;147;176m S   [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m Welcome to the shell.                           [38;2;44;40;66m│[m
+     [38;2;44;40;66m│[m    [38;2;154;147;176mNo sources yet[m    [38;2;44;40;66m││[m                                                 [38;2;44;40;66m│[m
+     [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m An application shell that lives in your         [38;2;44;40;66m│[m
+     [38;2;44;40;66m│[m   [38;2;114;107;138mnothing to load[m    [38;2;44;40;66m││[m terminal.                                       [38;2;44;40;66m│[m
+     [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m                                                 [38;2;44;40;66m│[m
+     [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m Focus                                           [38;2;44;40;66m│[m
+     [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m   The focused region has a bright, heavier      [38;2;44;40;66m│[m
+     [38;2;44;40;66m╰──────────────────────╯│[m border and a bold title, so                     [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┏[m [38;2;156;140;245;1mMetrics[m [38;2;156;140;245;1m━━━━━━[m [38;2;114;107;138m0.0/s[m [38;2;156;140;245;1m┓[38;2;44;40;66;22m│[m   the state survives a monochrome terminal.     [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m [38;2;154;147;176mThroughput[m           [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   tab cycles the ring, v badges every region    [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m [38;2;232;229;242m0[m                    [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m and jumps to the one you                        [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m [38;2;156;140;245m▁▃▁▇▄▂█▅▁▆▃▁▄▇▂▅[m     [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   press, alt+hjkl moves geometrically.          [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m [38;2;156;140;245m▁▃▁▇▄▂█▅▁▆▃▁▄▇▂▅[m     [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m                                                 [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m [38;2;156;140;245m▁▃▁▇▄▂█▅▁▆▃▁▄▇▂▅[m     [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m Commands                                        [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   ctrl+k opens the palette. Everything          [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m reachable by a key is reachable                 [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   there too, which is what makes the keyboard   [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m guarantee testable.                             [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m                                                 [38;2;44;40;66m│[m
+     [38;2;156;140;245;1m┗━━━━━━━━━━━━━━━━━━━━━━┛[38;2;44;40;66;22m╰[m [38;2;156;140;245mc[m [38;2;154;147;176mCycle tabs[m [38;2;44;40;66m────────────────────────────[m [38;2;114;107;138m[=  ][m [38;2;44;40;66m╯[m
+ [38;2;156;140;245mtab[m [38;2;154;147;176mFocus[m  [38;2;156;140;245mv[m [38;2;154;147;176mJump[m  [38;2;156;140;245m][m [38;2;154;147;176mSection[m  [38;2;156;140;245mctrl+t[m [38;2;154;147;176mTheme[m  [38;2;156;140;245m?[m [38;2;154;147;176mHelp[m  [38;2;156;140;245mq[38;2;114;107;138m…[38;2;93;190;142m✓[m [38;2;154;147;176mready[m   [38;2;156;140;245mctrl+k[m [38;2;154;147;176mpalette[m
+--- ascii ---
+ [1m>[m [1mdemo[m 0.1.0  [1;7m Home [m  Manager   Settings
+[1;7m H   [m+ Sources -------------++ Overview ---------------------------------------+
+ M   |                      || [1;7m Active [m  Archived   All                        |
+ S   |                      || Welcome to the shell.                           |
+     |    No sources yet    ||                                                 |
+     |                      || An application shell that lives in your         |
+     |   [2mnothing to load[m    || terminal.                                       |
+     |                      ||                                                 |
+     |                      || Focus                                           |
+     |                      ||   The focused region has a bright, heavier      |
+     +----------------------+| border and a bold title, so                     |
+     [1m#[m [1mMetrics[m [1m======[m 0.0/s [1m#[m|   the state survives a monochrome terminal.     |
+     [1m|[m Throughput           [1m|[m|   tab cycles the ring, v badges every region    |
+     [1m|[m 0                    [1m|[m| and jumps to the one you                        |
+     [1m|[m [1m.-.#=:@+.*-.=#:+[m     [1m|[m|   press, alt+hjkl moves geometrically.          |
+     [1m|[m [1m.-.#=:@+.*-.=#:+[m     [1m|[m|                                                 |
+     [1m|[m [1m.-.#=:@+.*-.=#:+[m     [1m|[m| Commands                                        |
+     [1m|[m                      [1m|[m|   ctrl+k opens the palette. Everything          |
+     [1m|[m                      [1m|[m| reachable by a key is reachable                 |
+     [1m|[m                      [1m|[m|   there too, which is what makes the keyboard   |
+     [1m|[m                      [1m|[m| guarantee testable.                             |
+     [1m|[m                      [1m|[m|                                                 |
+     [1m#======================#[m+ [1mc[m Cycle tabs ---------------------------- [=  ] +
+ [1mtab[m Focus  [1mv[m Jump  [1m][m Section  [1mctrl+t[m Theme  [1m?[m Help ...+ ready   [1mctrl+k[m palette
+--- dark ---
+ [38;2;156;140;245m▸[m [38;2;232;229;242;1mdemo[m [38;2;114;107;138m0.1.0[m  [38;2;16;13;26;48;2;156;140;245;1m Home [m [38;2;154;147;176m Manager [m [38;2;154;147;176m Settings [m
+[38;2;16;13;26;48;2;156;140;245;1m Home                       [38;2;44;40;66;49;22m╭[m [38;2;154;147;176mSources[m [38;2;44;40;66m─────────────╮╭[m [38;2;154;147;176mOverview[m [38;2;44;40;66m────────────────────────────────────────────────────────╮[m
+[38;2;154;147;176m Manager                    [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m [38;2;16;13;26;48;2;156;140;245;1m Active [m [38;2;154;147;176m Archived [m [38;2;154;147;176m All [m                                        [38;2;44;40;66m│[m
+[38;2;154;147;176m Settings                   [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m Welcome to the shell.                                            [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m                                                                  [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m An application shell that lives in your terminal.                [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m                                                                  [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m Focus                                                            [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m    [38;2;154;147;176mNo sources yet[m    [38;2;44;40;66m││[m   The focused region has a bright, heavier border and a bold     [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m title, so                                                        [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m   [38;2;114;107;138mnothing to load[m    [38;2;44;40;66m││[m   the state survives a monochrome terminal.                      [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m   tab cycles the ring, v badges every region and jumps to the    [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m one you                                                          [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m   press, alt+hjkl moves geometrically.                           [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m                                                                  [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m Commands                                                         [38;2;44;40;66m│[m
+                            [38;2;44;40;66m│[m                      [38;2;44;40;66m││[m   ctrl+k opens the palette. Everything reachable by a key is     [38;2;44;40;66m│[m
+                            [38;2;44;40;66m╰──────────────────────╯│[m reachable                                                        [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┏[m [38;2;156;140;245;1mMetrics[m [38;2;156;140;245;1m━━━━━━[m [38;2;114;107;138m0.0/s[m [38;2;156;140;245;1m┓[38;2;44;40;66;22m│[m   there too, which is what makes the keyboard guarantee          [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m [38;2;154;147;176mThroughput[m           [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m testable.                                                        [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m [38;2;232;229;242m0[m                    [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   ? lists every command with the key that reaches it, generated  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m [38;2;156;140;245m▁▃▁▇▄▂█▅▁▆▃▁▄▇▂▅[m     [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m from                                                             [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m [38;2;156;140;245m▁▃▁▇▄▂█▅▁▆▃▁▄▇▂▅[m     [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   the registry rather than written by hand.                      [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m [38;2;156;140;245m▁▃▁▇▄▂█▅▁▆▃▁▄▇▂▅[m     [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m                                                                  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m Themes                                                           [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   ctrl+t cycles dark, dim, high-contrast and ascii. The last one [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m has no                                                           [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   colour at all: if the app is usable there, nothing is being    [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m said with                                                        [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   colour alone.                                                  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m                                                                  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m Layout                                                           [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   Narrow the terminal. The sidebar collapses to initials at 120  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m columns                                                          [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   and disappears below 80; under 40x10 the frame is replaced by  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m a single                                                         [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m   legible message rather than a garbled one.                     [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┃[m                      [38;2;156;140;245;1m┃[38;2;44;40;66;22m│[m                                                                  [38;2;44;40;66m│[m
+                            [38;2;156;140;245;1m┗━━━━━━━━━━━━━━━━━━━━━━┛[38;2;44;40;66;22m╰[m [38;2;156;140;245mc[m [38;2;154;147;176mCycle tabs[m [38;2;44;40;66m────────────────────────────────────────────────────╯[m
+ [38;2;156;140;245mtab[m [38;2;154;147;176mFocus[m  [38;2;156;140;245mv[m [38;2;154;147;176mJump[m  [38;2;156;140;245m][m [38;2;154;147;176mSection[m  [38;2;156;140;245mctrl+t[m [38;2;154;147;176mTheme[m  [38;2;156;140;245m?[m [38;2;154;147;176mHelp[m  [38;2;156;140;245mq[m [38;2;154;147;176mQuit[m                                    [38;2;93;190;142m✓[m [38;2;154;147;176mready[m   [38;2;156;140;245mctrl+k[m [38;2;154;147;176mpalette[m
+--- ascii ---
+ [1m>[m [1mdemo[m 0.1.0  [1;7m Home [m  Manager   Settings
+[1;7m Home                       [m+ Sources -------------++ Overview --------------------------------------------------------+
+ Manager                    |                      || [1;7m Active [m  Archived   All                                         |
+ Settings                   |                      || Welcome to the shell.                                            |
+                            |                      ||                                                                  |
+                            |                      || An application shell that lives in your terminal.                |
+                            |                      ||                                                                  |
+                            |                      || Focus                                                            |
+                            |    No sources yet    ||   The focused region has a bright, heavier border and a bold     |
+                            |                      || title, so                                                        |
+                            |   [2mnothing to load[m    ||   the state survives a monochrome terminal.                      |
+                            |                      ||   tab cycles the ring, v badges every region and jumps to the    |
+                            |                      || one you                                                          |
+                            |                      ||   press, alt+hjkl moves geometrically.                           |
+                            |                      ||                                                                  |
+                            |                      || Commands                                                         |
+                            |                      ||   ctrl+k opens the palette. Everything reachable by a key is     |
+                            +----------------------+| reachable                                                        |
+                            [1m#[m [1mMetrics[m [1m======[m 0.0/s [1m#[m|   there too, which is what makes the keyboard guarantee          |
+                            [1m|[m Throughput           [1m|[m| testable.                                                        |
+                            [1m|[m 0                    [1m|[m|   ? lists every command with the key that reaches it, generated  |
+                            [1m|[m [1m.-.#=:@+.*-.=#:+[m     [1m|[m| from                                                             |
+                            [1m|[m [1m.-.#=:@+.*-.=#:+[m     [1m|[m|   the registry rather than written by hand.                      |
+                            [1m|[m [1m.-.#=:@+.*-.=#:+[m     [1m|[m|                                                                  |
+                            [1m|[m                      [1m|[m| Themes                                                           |
+                            [1m|[m                      [1m|[m|   ctrl+t cycles dark, dim, high-contrast and ascii. The last one |
+                            [1m|[m                      [1m|[m| has no                                                           |
+                            [1m|[m                      [1m|[m|   colour at all: if the app is usable there, nothing is being    |
+                            [1m|[m                      [1m|[m| said with                                                        |
+                            [1m|[m                      [1m|[m|   colour alone.                                                  |
+                            [1m|[m                      [1m|[m|                                                                  |
+                            [1m|[m                      [1m|[m| Layout                                                           |
+                            [1m|[m                      [1m|[m|   Narrow the terminal. The sidebar collapses to initials at 120  |
+                            [1m|[m                      [1m|[m| columns                                                          |
+                            [1m|[m                      [1m|[m|   and disappears below 80; under 40x10 the frame is replaced by  |
+                            [1m|[m                      [1m|[m| a single                                                         |
+                            [1m|[m                      [1m|[m|   legible message rather than a garbled one.                     |
+                            [1m|[m                      [1m|[m|                                                                  |
+                            [1m#======================#[m+ [1mc[m Cycle tabs ----------------------------------------------------+
+ [1mtab[m Focus  [1mv[m Jump  [1m][m Section  [1mctrl+t[m Theme  [1m?[m Help  [1mq[m Quit                                    + ready   [1mctrl+k[m palette
