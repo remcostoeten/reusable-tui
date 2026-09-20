@@ -89,6 +89,19 @@ type Theme struct {
 	Styles  Styles
 }
 
+// Canvas is the colour every cell of the frame falls back to when nothing
+// styled it. It is nil for mono themes and for palettes that opted out of
+// colour, which is how a terminal keeps its own background.
+func (t Theme) Canvas() color.Color {
+	if t.Mono || t.Palette.Bg == nil {
+		return nil
+	}
+	if _, none := t.Palette.Bg.(lipgloss.NoColor); none {
+		return nil
+	}
+	return t.Palette.Bg
+}
+
 // New builds a theme, precomputing its styles. Mono themes signal every state
 // with weight and reversal instead of colour.
 func New(name string, dark, mono bool, p Palette, c Chrome) Theme {

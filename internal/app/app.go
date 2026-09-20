@@ -3,7 +3,6 @@
 package app
 
 import (
-	"github.com/remcostoeten/reusable-tui/internal/modules/manager"
 	"github.com/remcostoeten/reusable-tui/internal/tui/core/config"
 	"github.com/remcostoeten/reusable-tui/internal/tui/core/registry"
 	"github.com/remcostoeten/reusable-tui/internal/tui/core/runtime"
@@ -32,7 +31,7 @@ func Build(o Options) (runtime.Model, error) {
 	r := registry.NewRegistrar()
 	registerGlobals(r)
 
-	deps := Deps{Config: o.Config, Store: manager.NewStore()}
+	deps := Deps{Config: o.Config}
 	for _, m := range Modules(deps) {
 		m.Register(r)
 	}

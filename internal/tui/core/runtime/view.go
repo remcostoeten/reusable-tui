@@ -26,6 +26,10 @@ func (m Model) View() tea.View {
 // Render draws the frame. It is exported separately from View so that golden
 // tests can assert on a frame without a terminal.
 func (m Model) Render() string {
+	return render.Fill(m.render(), m.core.Size, m.theme.Canvas())
+}
+
+func (m Model) render() string {
 	rc := render.NewContext(m.theme, m.core.Size.Rect(), m.ui.Breakpoint, m.focus)
 
 	switch {

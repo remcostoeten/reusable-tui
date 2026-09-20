@@ -1,7 +1,10 @@
 package render
 
 import (
+	"strings"
 	"testing"
+
+	lipgloss "charm.land/lipgloss/v2"
 
 	"github.com/remcostoeten/reusable-tui/internal/tui/kernel"
 )
@@ -83,5 +86,41 @@ func TestOverlayRespectsWideRunesInTheBase(t *testing.T) {
 	got := Overlay("日本語", "x", kernel.Rect{X: 2, Y: 0, Width: 1, Height: 1})
 	if w := Width(got); w != 6 {
 		t.Fatalf("overlay changed the row width to %d, want 6: %q", w, got)
+	}
+}
+
+func TestFillPaintsEveryCellIncludingPadding(t *testing.T) {
+	size := kernel.Size{Width: 4, Height: 2}
+	bg := lipgloss.Color("#112233")
+
+	got := Fill("hi", size, bg)
+
+	for i, line := range Lines(got) {
+		if strings.Count(line, "48;2;17;34;51") == 0 {
+			t.Errorf("row %d carries no background: %q", i, line)
+		}
+		if Width(line) != size.Width {
+			t.Errorf("row %d is %d cells wide, want %d", i, Width(line), size.Width)
+		}
+	}
+}
+
+func TestFillKeepsCellsThatNamedTheirOwnBackground(t *testing.T) {
+	size := kernel.Size{Width: 6, Height: 1}
+	selected := lipgloss.NewStyle().Background(lipgloss.Color("#aabbcc")).Render("sel")
+
+	got := Fill(selected, size, lipgloss.Color("#112233"))
+
+	if !strings.Contains(got, "48;2;170;187;204") {
+		t.Errorf("Fill overwrote an explicit background: %q", got)
+	}
+	if !strings.Contains(got, "48;2;17;34;51") {
+		t.Errorf("Fill skipped the padding cells: %q", got)
+	}
+}
+
+func TestFillWithoutAColourIsANoOp(t *testing.T) {
+	if got := Fill("hi", kernel.Size{Width: 4, Height: 1}, nil); got != "hi" {
+		t.Errorf("Fill(nil) = %q, want %q", got, "hi")
 	}
 }

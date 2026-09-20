@@ -1,6 +1,8 @@
 package render
 
 import (
+	"image/color"
+
 	lipgloss "charm.land/lipgloss/v2"
 
 	"github.com/remcostoeten/reusable-tui/internal/tui/kernel"
@@ -41,6 +43,36 @@ func Compose(area kernel.Rect, blocks ...Block) string {
 			Z(i+1))
 	}
 	return lipgloss.NewCompositor(layers...).Render()
+}
+
+// Fill paints bg behind a finished frame. It works on cells rather than on the
+// string, because an outer style cannot survive the reset sequences a nested
+// style emits: every cell that named no background of its own gets this one,
+// and every cell that named one keeps it.
+//
+// A nil colour returns the frame untouched, which is how a mono theme and a
+// terminal-default background stay possible.
+func Fill(s string, size kernel.Size, bg color.Color) string {
+	if bg == nil || size.IsZero() {
+		return s
+	}
+
+	canvas := lipgloss.NewCanvas(size.Width, size.Height)
+	canvas.Compose(lipgloss.NewLayer(Clip(s, size)))
+
+	for y := range size.Height {
+		for x := range size.Width {
+			cell := canvas.CellAt(x, y)
+			if cell == nil || cell.Style.Bg != nil {
+				continue
+			}
+			if cell.Width == 0 {
+				continue
+			}
+			cell.Style.Bg = bg
+		}
+	}
+	return canvas.Render()
 }
 
 // Overlay composites over on top of base at the given position. Cell accuracy
