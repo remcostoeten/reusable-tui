@@ -36,8 +36,15 @@ func rewrite(o options) (int, error) {
 
 	changed := 0
 	err := filepath.WalkDir(o.Dir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !rewritable[filepath.Ext(path)] {
+		if err != nil {
 			return err
+		}
+		if d.IsDir() && d.Name() == ".claude" {
+			// Skills point back at the template repository on purpose.
+			return filepath.SkipDir
+		}
+		if d.IsDir() || !rewritable[filepath.Ext(path)] {
+			return nil
 		}
 
 		before, err := os.ReadFile(path)

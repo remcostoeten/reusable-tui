@@ -42,6 +42,20 @@ create-tui -demo -ref v0.2.0 playground   # keep the demo, pin a tag
 The scaffolder imports nothing outside the standard library, so `go run` on it
 resolves in a second rather than pulling the shell's dependency graph.
 
+## Migrate an existing CLI
+
+An agent skill, `reusable-tui-migrate`, ports an existing Go CLI onto this
+template. It scaffolds a project, moves the domain logic over, turns
+subcommands into modules and keeps headless flags working. Install it in the
+old CLI's repository:
+
+```sh
+npx skills add remcostoeten/reusable-tui
+```
+
+Then ask your agent to migrate the CLI. Scaffolded projects already ship the
+skill in `.claude/skills/`.
+
 ## What a scaffolded project looks like
 
 ```
